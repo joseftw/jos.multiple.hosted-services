@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "JOS.Multiple.HostedServices": {
+      "commandName": "Project",
+      "commandLineArgs": "--environment=Development"
+    }
+  }
+}
