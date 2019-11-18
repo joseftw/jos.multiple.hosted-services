@@ -19,10 +19,11 @@ namespace JOS.Multiple.HostedServices.Features.Service1
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public override Task StartAsync(CancellationToken cancellationToken)
+        public override async Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(MyService1)} is starting...");
-            return base.StartAsync(cancellationToken);
+            await base.StartAsync(cancellationToken);
+            _logger.LogInformation($"{nameof(MyService1)} has started");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stopToken)
@@ -33,10 +34,11 @@ namespace JOS.Multiple.HostedServices.Features.Service1
             }
         }
 
-        public override Task StopAsync(CancellationToken cancellationToken)
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(MyService1)} received stop signal...");
-            return base.StopAsync(cancellationToken);
+            await base.StopAsync(cancellationToken);
+            _logger.LogInformation($"{nameof(MyService1)} has stopped");
         }
     }
 }

@@ -8,6 +8,7 @@ namespace JOS.Multiple.HostedServices.Features.Service4
 {
     public class MyService4 : IHostedService
     {
+        private Task _executingTask;
         private readonly MyService4Handler _myService4Handler;
         private readonly ILogger<MyService4> _logger;
 
@@ -22,7 +23,7 @@ namespace JOS.Multiple.HostedServices.Features.Service4
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(MyService4)} is starting...");
-            var task = ExecuteAsync(cancellationToken);
+            _executingTask = ExecuteAsync(cancellationToken);
             _logger.LogInformation($"{nameof(MyService4)} has started");
             return Task.CompletedTask;
         }
@@ -30,6 +31,14 @@ namespace JOS.Multiple.HostedServices.Features.Service4
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(MyService4)} received stop signal...");
+
+            if (_executingTask == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            var hej = _executingTask.IsCompleted;
+
             _logger.LogInformation($"{nameof(MyService4)} has stopped");
 
             return Task.CompletedTask;

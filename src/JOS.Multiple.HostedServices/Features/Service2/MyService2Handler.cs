@@ -16,11 +16,8 @@ namespace JOS.Multiple.HostedServices.Features.Service2
 
         public async Task ListenForMessages(CancellationToken cancellationToken)
         {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                _logger.LogInformation($"Hello from {nameof(MyService2Handler)}");
-                await Task.Delay(1000, cancellationToken);
-            }
+            _logger.LogInformation($"Hello from {nameof(MyService2Handler)}");
+            await Task.Delay(1000, cancellationToken);
         }
     }
 }

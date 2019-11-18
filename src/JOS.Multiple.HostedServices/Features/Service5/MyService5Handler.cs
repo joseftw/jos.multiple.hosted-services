@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using JOS.Multiple.HostedServices.Features.Service1;
 using Microsoft.Extensions.Logging;
 
 namespace JOS.Multiple.HostedServices.Features.Service5
@@ -17,11 +16,8 @@ namespace JOS.Multiple.HostedServices.Features.Service5
 
         public async Task ListenForMessages(CancellationToken cancellationToken)
         {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                _logger.LogInformation($"Hello from {nameof(MyService5Handler)}");
-                await Task.Delay(5000, cancellationToken);
-            }
+            _logger.LogInformation($"Hello from {nameof(MyService5Handler)}");
+            await Task.Delay(5000, cancellationToken);
         }
     }
 }

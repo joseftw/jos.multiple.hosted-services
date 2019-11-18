@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using JOS.Multiple.HostedServices.Features.Service1;
 using JOS.Multiple.HostedServices.Features.Service2;
 using JOS.Multiple.HostedServices.Features.Service3;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace JOS.Multiple.HostedServices
 {
@@ -29,7 +31,14 @@ namespace JOS.Multiple.HostedServices
                 logger.LogInformation($"Starting application. Environment: {hostEnvironment.EnvironmentName}");
             }
 
-            await host.RunAsync();
+            try
+            {
+                await host.RunAsync();
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)

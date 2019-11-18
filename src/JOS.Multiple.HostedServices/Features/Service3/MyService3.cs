@@ -7,7 +7,7 @@ using Timer = System.Threading.Timer;
 
 namespace JOS.Multiple.HostedServices.Features.Service3
 {
-    public class MyService3 : BackgroundService
+    public class MyService3 : IHostedService
     {
         private Timer _timer;
         private readonly MyService3Handler _myService3Handler;
@@ -21,38 +21,29 @@ namespace JOS.Multiple.HostedServices.Features.Service3
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public override Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(MyService3)} is starting...");
 
             _timer = new Timer(async state =>
             {
-                _timer.Change(Timeout.InfiniteTimeSpan, TimeSpan.Zero);
+                _timer?.Change(Timeout.InfiniteTimeSpan, TimeSpan.Zero);
                 await _myService3Handler.DoWork(cancellationToken);
-                _timer.Change(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+                _timer?.Change(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
             }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
 
-            return base.StartAsync(cancellationToken);
+            _logger.LogInformation($"{nameof(MyService3)} has started");
+
+            return Task.CompletedTask;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                await Task.Yield();
-            }
-        }
-
-        public override Task StopAsync(CancellationToken cancellationToken)
+        public Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"{nameof(MyService3)} received stop signal...");
-            return base.StopAsync(cancellationToken);
-        }
-
-        public override void Dispose()
-        {
             _timer?.Dispose();
-            base.Dispose();
+            _logger.LogInformation($"{nameof(MyService3)} has stopped");
+
+            return Task.CompletedTask;
         }
     }
 }
