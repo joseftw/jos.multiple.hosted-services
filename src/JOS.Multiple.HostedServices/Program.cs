@@ -2,6 +2,8 @@
 using JOS.Multiple.HostedServices.Features.Service1;
 using JOS.Multiple.HostedServices.Features.Service2;
 using JOS.Multiple.HostedServices.Features.Service3;
+using JOS.Multiple.HostedServices.Features.Service4;
+using JOS.Multiple.HostedServices.Features.Service5;
 using JOS.Multiple.HostedServices.Features.Shared.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,8 +25,8 @@ namespace JOS.Multiple.HostedServices
             using (var scope = serviceScopeFactory.CreateScope())
             {
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                var hostingEnvironment = scope.ServiceProvider.GetRequiredService<IHostingEnvironment>();
-                logger.LogInformation($"Starting application. Environment: {hostingEnvironment.EnvironmentName}");
+                var hostEnvironment = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
+                logger.LogInformation($"Starting application. Environment: {hostEnvironment.EnvironmentName}");
             }
 
             await host.RunAsync();
@@ -48,10 +50,14 @@ namespace JOS.Multiple.HostedServices
                     services.AddSingleton<MyService1Handler>();
                     services.AddSingleton<MyService2Handler>();
                     services.AddSingleton<MyService3Handler>();
+                    services.AddSingleton<MyService4Handler>();
+                    services.AddSingleton<MyService5Handler>();
 
                     services.AddHostedService<MyService1>();
                     services.AddHostedService<MyService2>();
                     services.AddHostedService<MyService3>();
+                    services.AddHostedService<MyService4>();
+                    services.AddHostedService<MyService5>();
                 })
                 .ConfigureLogging((context, loggingBuilder) =>
                 {

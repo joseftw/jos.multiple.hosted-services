@@ -19,33 +19,33 @@ namespace JOS.Multiple.HostedServices.Features.Shared.Logging
         private const string OutputFormat = "[{Timestamp:HH:mm:ss} {Level:u3}][{CorrelationId}] {Message}{NewLine}{Exception}";
         public static void ConfigureLoggingFeature(
             this ILoggingBuilder loggingBuilder,
-            IHostingEnvironment hostingEnvironment,
+            IHostEnvironment hostEnvironment,
             IConfiguration configuration,
             IServiceCollection services)
         {
             loggingBuilder.AddSerilog();
             var loggerConfiguration = new LoggerConfiguration();
             
-            ConfigureLogLevel(loggerConfiguration, hostingEnvironment, configuration);
-            ConfigureConsoleLogging(loggerConfiguration, hostingEnvironment, configuration);
-            ConfigureFileLogging(loggerConfiguration, hostingEnvironment, configuration);
-            ConfigureElasticSearchLogging(loggerConfiguration, hostingEnvironment, configuration);
+            ConfigureLogLevel(loggerConfiguration, hostEnvironment, configuration);
+            ConfigureConsoleLogging(loggerConfiguration, hostEnvironment, configuration);
+            ConfigureFileLogging(loggerConfiguration, hostEnvironment, configuration);
+            ConfigureElasticSearchLogging(loggerConfiguration, hostEnvironment, configuration);
 
             Log.Logger = loggerConfiguration.CreateLogger();
         }
 
         private static void ConfigureLogLevel(
             LoggerConfiguration loggerConfiguration,
-            IHostingEnvironment hostingEnvironment,
+            IHostEnvironment hostEnvironment,
             IConfiguration configuration)
         {
             var minimumLevelConfig = configuration.GetValue<string>("Logging:MinimumLevel:Default");
             var microsoftLevelConfig = configuration.GetValue<string>("Logging:MinimumLevel:Microsoft");
             var systemLevelConfig = configuration.GetValue<string>("Logging:MinimumLevel:System");
             
-            Enum.TryParse(minimumLevelConfig ?? (hostingEnvironment.IsDevelopment() ? "Debug" : "Information"), out LogEventLevel minimumLevel);
-            Enum.TryParse(microsoftLevelConfig ?? (hostingEnvironment.IsDevelopment() ? "Information" : "Warning"), out LogEventLevel microsoftLevel);
-            Enum.TryParse(systemLevelConfig ?? (hostingEnvironment.IsDevelopment() ? "Information" : "Warning"), out LogEventLevel systemLevel);
+            Enum.TryParse(minimumLevelConfig ?? (hostEnvironment.IsDevelopment() ? "Debug" : "Information"), out LogEventLevel minimumLevel);
+            Enum.TryParse(microsoftLevelConfig ?? (hostEnvironment.IsDevelopment() ? "Information" : "Warning"), out LogEventLevel microsoftLevel);
+            Enum.TryParse(systemLevelConfig ?? (hostEnvironment.IsDevelopment() ? "Information" : "Warning"), out LogEventLevel systemLevel);
 
             loggerConfiguration.MinimumLevel.Is(minimumLevel)
                 .MinimumLevel.Override("Microsoft", microsoftLevel)
@@ -54,10 +54,10 @@ namespace JOS.Multiple.HostedServices.Features.Shared.Logging
 
         private static void ConfigureConsoleLogging(
             LoggerConfiguration loggerConfiguration,
-            IHostingEnvironment hostingEnvironment,
+            IHostEnvironment hostEnvironment,
             IConfiguration configuration)
         {
-            var shouldLogToConsoleConfig = configuration.GetValue<bool?>("Logging:Output:Console:Enabled") ?? hostingEnvironment.IsDevelopment();
+            var shouldLogToConsoleConfig = configuration.GetValue<bool?>("Logging:Output:Console:Enabled") ?? hostEnvironment.IsDevelopment();
             if (shouldLogToConsoleConfig)
             {
                 loggerConfiguration.WriteTo.Async(a => a.Console(outputTemplate: OutputFormat));
@@ -66,10 +66,10 @@ namespace JOS.Multiple.HostedServices.Features.Shared.Logging
 
         private static void ConfigureFileLogging(
             LoggerConfiguration loggerConfiguration,
-            IHostingEnvironment hostingEnvironment,
+            IHostEnvironment hostEnvironment,
             IConfiguration configuration)
         {
-            var shouldLogToFile = configuration.GetValue<bool?>("Logging:Output:File:Enabled") ?? hostingEnvironment.IsDevelopment();
+            var shouldLogToFile = configuration.GetValue<bool?>("Logging:Output:File:Enabled") ?? hostEnvironment.IsDevelopment();
             if (shouldLogToFile)
             {
                 var logDirectory = configuration.GetValue<string>("Logging:Output:File:Directory") ?? $"..{Path.DirectorySeparatorChar}..{Path.DirectorySeparatorChar}logs";
@@ -90,10 +90,10 @@ namespace JOS.Multiple.HostedServices.Features.Shared.Logging
 
         private static void ConfigureElasticSearchLogging(
             LoggerConfiguration loggerConfiguration,
-            IHostingEnvironment hostingEnvironment,
+            IHostEnvironment hostEnvironment,
             IConfiguration configuration)
         {
-            var shouldLogToElasticSearch = configuration.GetValue<bool?>("Logging:Output:ElasticSearch:Enabled") ?? !hostingEnvironment.IsDevelopment();
+            var shouldLogToElasticSearch = configuration.GetValue<bool?>("Logging:Output:ElasticSearch:Enabled") ?? !hostEnvironment.IsDevelopment();
 
             if (shouldLogToElasticSearch)
             {
