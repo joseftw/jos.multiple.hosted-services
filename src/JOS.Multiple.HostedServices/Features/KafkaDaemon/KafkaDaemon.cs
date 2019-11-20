@@ -19,14 +19,23 @@ namespace JOS.Multiple.HostedServices.Features.KafkaDaemon
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            try
             {
-                using (var scope = _serviceScopeFactory.CreateScope())
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    var kafkaConsumer = scope.ServiceProvider.GetRequiredService<KafkaConsumer>();
-                    await kafkaConsumer.Consume();
+                    using (var scope = _serviceScopeFactory.CreateScope())
+                    {
+                        var kafkaConsumer = scope.ServiceProvider.GetRequiredService<KafkaConsumer>();
+                        await kafkaConsumer.Consume();
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                await StopAsync(stoppingToken);
+            }
+            
         }
     }
 }

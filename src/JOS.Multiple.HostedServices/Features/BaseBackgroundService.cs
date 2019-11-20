@@ -8,6 +8,7 @@ namespace JOS.Multiple.HostedServices.Features
 {
     public abstract class BaseBackgroundService : BackgroundService
     {
+        protected bool Stopped;
         private readonly Type _type;
         protected readonly ILogger<BaseBackgroundService> Logger;
 
@@ -26,9 +27,13 @@ namespace JOS.Multiple.HostedServices.Features
 
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            Logger.LogInformation($"Stopping {_type.Name}...");
-            await base.StopAsync(cancellationToken);
-            Logger.LogInformation($"{_type.Name} has stopped");
+            if (!Stopped)
+            {
+                Logger.LogInformation($"Stopping {_type.Name}...");
+                await base.StopAsync(cancellationToken);
+                Stopped = true;
+                Logger.LogInformation($"{_type.Name} has stopped");
+            }
         }
 
         protected abstract override Task ExecuteAsync(CancellationToken stoppingToken);
