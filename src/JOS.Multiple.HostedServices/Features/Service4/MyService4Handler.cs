@@ -18,6 +18,7 @@ namespace JOS.Multiple.HostedServices.Features.Service4
         {
             _logger.LogInformation($"Hello from {nameof(MyService4Handler)}");
             await Task.Delay(5000, cancellationToken);
+            throw new Exception("BOOM");
         }
     }
 }

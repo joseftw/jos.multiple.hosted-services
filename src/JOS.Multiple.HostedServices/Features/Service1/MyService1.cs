@@ -1,29 +1,19 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace JOS.Multiple.HostedServices.Features.Service1
 {
-    public class MyService1 : BackgroundService
+    public class MyService1 : BaseBackgroundService
     {
         private readonly MyService1Handler _myService1Handler;
-        private readonly ILogger<MyService1> _logger;
 
         public MyService1(
             MyService1Handler myService1Handler,
-            ILogger<MyService1> logger)
+            ILogger<MyService1> logger) : base(typeof(MyService1), logger)
         {
             _myService1Handler = myService1Handler ?? throw new ArgumentNullException(nameof(myService1Handler));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
-
-        public override async Task StartAsync(CancellationToken cancellationToken)
-        {
-            _logger.LogInformation($"{nameof(MyService1)} is starting...");
-            await base.StartAsync(cancellationToken);
-            _logger.LogInformation($"{nameof(MyService1)} has started");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stopToken)
@@ -32,13 +22,6 @@ namespace JOS.Multiple.HostedServices.Features.Service1
             {
                 await _myService1Handler.ListenForMessages(stopToken);
             }
-        }
-
-        public override async Task StopAsync(CancellationToken cancellationToken)
-        {
-            _logger.LogInformation($"{nameof(MyService1)} received stop signal...");
-            await base.StopAsync(cancellationToken);
-            _logger.LogInformation($"{nameof(MyService1)} has stopped");
         }
     }
 }

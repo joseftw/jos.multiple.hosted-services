@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using JOS.Multiple.HostedServices.Features.KafkaDaemon;
 using JOS.Multiple.HostedServices.Features.Service1;
 using JOS.Multiple.HostedServices.Features.Service2;
 using JOS.Multiple.HostedServices.Features.Service3;
@@ -59,12 +60,14 @@ namespace JOS.Multiple.HostedServices
                     services.AddSingleton<MyService1Handler>();
                     services.AddSingleton<MyService2Handler>();
                     services.AddSingleton<MyService3Handler>();
+                    services.AddSingleton<KafkaConsumer>();
                     services.AddSingleton<MyService4Handler>();
                     services.AddSingleton<MyService5Handler>();
 
                     services.AddHostedService<MyService1>();
                     services.AddHostedService<MyService2>();
                     services.AddHostedService<MyService3>();
+                    services.AddHostedService<KafkaDaemon>();
                     services.AddHostedService<MyService4>();
                     services.AddHostedService<MyService5>();
                 })
